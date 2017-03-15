@@ -1,0 +1,51 @@
+﻿@using Test.Models
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Test</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script>
+        function getDetails(numCourse) {
+            var url = "/Home/GetDetails";
+            $.get(url, { raceId: numCourse }, function (coureurs) {
+                $.each(coureurs, function (index, runner) {
+                    var runnerDetail = $('<div class="' + runner.Nom + '">' + runner.Nom + ' <input type="checkbox"></div>');
+                    $('#RightContainer').append(runnerDetail);
+                });
+                $('#DeleteButton').show();
+            });
+        }
+
+        function deleteRunners() {
+            $('#RightContainer').find('input').each(function(index,chkBox) {
+                if ($(chkBox).is(':checked')) {
+                    var target = $($(chkBox).parent()).attr('class');
+                    $('.' + target).remove();
+                } 
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="Container" style="float: left; margin-right: 200px;">
+        <table id="LeftContainer">
+            @{
+                if (ViewData["AllRaces"] != null && ViewData.Values != null && ViewData.Values.Count() > 0)
+                {
+                    foreach (var race in ViewData["AllRaces"] as IList<Course>)
+                    {
+                        <tr>
+                            <td onclick="getDetails(@race.Num)">@race.LibCourse</td>
+                        </tr>
+                    }
+                }
+            }
+        </table>
+    </div>
+<div id="RightContainer">
+</div>
+<button id="DeleteButton" onclick="deleteRunners()" style="display: none;">Supprimer participant(s)</button>
+</body>
+</html>
